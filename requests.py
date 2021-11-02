@@ -3,22 +3,21 @@ import json
 
 
 class Response:
-    def __init__(data):
+    def __init__(self, data):
         self.raw = data
         self.text = str(data)
     
-    def json():
+    def json(self):
         return json.loads(self.raw)
 
 
-def get(url, *args, **kwargs):
+def get(url, **kwargs):
     request = XMLHttpRequest.new()
     request.open("GET", url, False)
     return Response(request.response)
-    
-def post(url, *args, **kwargs):
+
+
+def post(url, **kwargs):
     request = XMLHttpRequest.new()
     request.open("POST", url, False)
     return Response(request.response)
-
-    
