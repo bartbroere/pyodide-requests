@@ -1,4 +1,3 @@
-import os
 from setuptools import setup, find_packages
 
 setup(
@@ -10,7 +9,7 @@ setup(
     url="https://github.com/bartbroere/pyodide-requests",
     author="Bart Broere",
     author_email="mail@bartbroere.eu",
-    packages=find_packages(),
+    packages=['requests'],
     install_requires=[],
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
