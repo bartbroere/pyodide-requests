@@ -25,7 +25,9 @@ def get(url, params=None, headers=None, cookies=None, **kwargs):
     request = XMLHttpRequest.new()
     if params:
         if isinstance(params, Mapping):
-            url = url + '?' + URLSearchParams.new([[param, value] for param, value in params.items()])
+            url = url + '?' + URLSearchParams.new([[param, value] for param, value in params.items()]).to_py()
+        else:
+            ...
     request.open("GET", url, False)
     if headers:
         _set_headers(request, headers)
