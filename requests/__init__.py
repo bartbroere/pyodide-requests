@@ -1,23 +1,55 @@
-from js import XMLHttpRequest
+from collections import Mapping
+
+from js import XMLHttpRequest, Blob, URLSearchParams
 import json
 
 
 class Response:
-    def __init__(self, data):
-        self.raw = data
-        self.text = str(data)
+    def __init__(self, request):
+        self.raw = request.response  # TODO make this a bytestring, as it is in the real requests library
+        self.text = str(request.response)
+        self.status_code = request.status
     
     def json(self):
         return json.loads(self.raw)
 
 
-def get(url, **kwargs):
+def get(url, params=None, headers=None, cookies=None, **kwargs):
     request = XMLHttpRequest.new()
+    if params:
+        if isinstance(params, Mapping):
+            url = url + '?' + URLSearchParams.new([[param, value] for param, value in params.items()])
     request.open("GET", url, False)
-    return Response(request.response)
+    if headers:
+        _set_headers(request, headers)
+    if cookies:
+        ...
+    request.send()
+    return Response(request)
 
 
-def post(url, **kwargs):
+def post(url, data=None, headers=None, cookies=None, **kwargs):
     request = XMLHttpRequest.new()
     request.open("POST", url, False)
-    return Response(request.response)
+    if headers:
+        _set_headers(request, headers)
+    if cookies:
+        ...  # TODO set the cookie in the browser, otherwise we rely on the cookie the browser decides to send
+    if data:
+        if isinstance(data, Mapping):
+            data = Blob.new([json.dumps(data)], {
+                'type': 'application/json'
+            })
+            request.send(data)
+        else:
+            ...
+    else:
+        request.send()
+    return Response(request)
+
+
+def _set_headers(request, headers):
+    assert isinstance(headers, Mapping)
+    for header, value in headers.items():
+        request.setRequestHeader(header, value)
+    return request
