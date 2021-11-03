@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name="requests",
-    version="2021.11.2",
-    description="Requests, polyfilled for Pyodide",
-    long_description="# Requests, polyfilled for Pyodide",
+    version="2021.11.3",
+    description="Requests, for Pyodide",
+    long_description="# Requests, for Pyodide",
     long_description_content_type="text/markdown",
     url="https://github.com/bartbroere/pyodide-requests",
     author="Bart Broere",
