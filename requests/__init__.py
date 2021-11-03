@@ -7,8 +7,9 @@ It aims to cover the most common uses.
 """
 import json
 from collections import Mapping
+from urllib.parse import urlencode
 
-from js import Blob, URLSearchParams, XMLHttpRequest
+from js import Blob, XMLHttpRequest
 
 
 class Response:
@@ -25,7 +26,7 @@ def get(url, params=None, headers=None, cookies=None, **kwargs):
     request = XMLHttpRequest.new()
     if params:
         if isinstance(params, Mapping):
-            url = url + '?' + URLSearchParams.new([[param, value] for param, value in params.items()])
+            url = url + '?' + urlencode(params)
     request.open("GET", url, False)
     if headers:
         _set_headers(request, headers)
