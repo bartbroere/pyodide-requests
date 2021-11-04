@@ -48,6 +48,7 @@ def post(url, data=None, headers=None, cookies=None, **kwargs):
             data = Blob.new([json.dumps(data)], {
                 'type': 'application/json'
             })
+            request.setRequestHeader('Content-Type', 'application/json')
             request.send(data)
         else:
             ...
