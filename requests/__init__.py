@@ -17,7 +17,8 @@ class Response:
         self.raw = request.response  # TODO make this a bytestring, as it is in the real requests library
         self.text = str(request.response)
         self.status_code = request.status
-    
+        self.headers = request.getAllResponseHeaders()  # TODO turn this into a Case INseNSiTive DicT
+
     def json(self):
         return json.loads(self.raw)
 
