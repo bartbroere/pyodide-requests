@@ -8,7 +8,7 @@ It aims to cover the most common uses.
 import json
 from collections import Mapping
 from urllib.parse import urlencode
-from .status_codes import codes
+from .status_codes import *
 
 from js import Blob, XMLHttpRequest
 
@@ -66,5 +66,4 @@ def _set_headers(request, headers):
     return request
 
 
-# avoid optimizing imports away (TODO something with __all__)
-assert codes
+__all__ = ['codes', 'get', 'post', 'Response']
