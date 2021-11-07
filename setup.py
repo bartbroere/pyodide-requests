@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="requests",
-    version="2021.11.3",
+    version="2021.11.7",
     description="Requests, for Pyodide",
     long_description="# Requests, for Pyodide",
     long_description_content_type="text/markdown",
