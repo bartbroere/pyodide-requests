@@ -9,7 +9,9 @@ requests.exceptions
 This module contains the set of Requests' exceptions.
 """
 
-from urllib3.exceptions import HTTPError as BaseHTTPError
+
+class BaseHTTPError(Exception):
+    """Base exception used by this module."""
 
 
 class RequestException(IOError):
