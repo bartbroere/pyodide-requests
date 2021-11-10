@@ -94,7 +94,7 @@ class Response:
             self.raw = str(request.response)
         self.status_code = request.status
         try:
-            self.headers = CaseInsensitiveDict(Parser.parsestr(request.getAllResponseHeaders(), headersonly=True))
+            self.headers = CaseInsensitiveDict(Parser().parsestr(request.getAllResponseHeaders(), headersonly=True))
         except TypeError as e:
             # TODO Sometimes this raises TypeError: parsestr() missing 1 required positional argument: 'text'
             #      Find out why and fix, but continue without headers for now
