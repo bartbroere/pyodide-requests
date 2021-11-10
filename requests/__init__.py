@@ -10,7 +10,7 @@ This means that some headers are included by default, even though they might not
 It also means cookies are handled mostly by the browser and a bit less by requests.Session.
 This way, Python code can use authenticated sessions that already exist in the browser.
 """
-import json
+import json as json_module  # Renamed to avoid unintentional shadowing by the json parameter in the request() method
 from email.parser import Parser
 from collections import Mapping
 from urllib.parse import urlencode
@@ -23,13 +23,17 @@ from js import Blob, XMLHttpRequest
 
 class Response:
     def __init__(self, request):
-        self.raw = request.response  # TODO make this a bytestring, as it is in the real requests library
+        if request.responseType == 'blob':
+            self.raw = bytes(request.response.arrayBuffer().result().to_py())
         self.text = str(request.response)
         self.status_code = request.status
         self.headers = CaseInsensitiveDict(Parser.parsestr(request.getAllResponseHeaders(), headersonly=True))
 
     def json(self):
-        return json.loads(self.raw)
+        return json_module.loads(self.raw)
+
+    def iter_content(self, *a, **k):
+        yield self.raw
 
 
 def request(method, url,
@@ -37,18 +41,20 @@ def request(method, url,
             auth=None, timeout=None, allow_redirects=True, proxies=None,
             hooks=None, stream=None, verify=None, cert=None, json=None):
     request = XMLHttpRequest.new()
-    request.open(method, url, False)
+    request.open(method.upper(), url, False)
     if params:
         if isinstance(params, Mapping):
             url = url + '?' + urlencode(params)
     if headers:
         _set_headers(request, headers)
     if cookies:
-        ...  # TODO set the cookie in the browser, otherwise we rely on the cookie the browser decides to send
+        ...  # TODO set the cookie in the browser, otherwise we rely on the cookies the browser decides to send
+    if stream:
+        request.responseType = "blob"
     if data:
         if isinstance(data, Mapping):
-            data = Blob.new([json.dumps(data)], {
-                'type': 'application/json'
+            data = Blob.new([json_module.dumps(data)], {
+                'type': 'application/json',
             })
             request.setRequestHeader('Content-Type', 'application/json')
             request.send(data)
@@ -70,6 +76,12 @@ __all__ = [
     'codes',
     'get',
     'post',
+    'patch',
+    'put',
+    'delete',
+    'request',
+    'options',
+    'head',
     'Response',
     "RequestException",
     "InvalidJSONError",
@@ -97,7 +109,7 @@ __all__ = [
     "RequestsDependencyWarning",
 ]
 
-# To get a mostly feature complete requests library, we'll eventually need this in __all__ and implemented
+# To get a mostly feature complete requests library, we'll eventually need this in __all__ and implemented correctly
 # dir(requests)
 # ['ConnectTimeout', 'ConnectionError', 'DependencyWarning', 'FileModeWarning', 'HTTPError', 'NullHandler',
 #  'PreparedRequest', 'ReadTimeout', 'Request', 'RequestException', 'RequestsDependencyWarning', 'Response', 'Session',
@@ -121,7 +133,6 @@ def get(url, params=None, **kwargs):
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
-
     kwargs.setdefault('allow_redirects', True)
     return request('get', url, params=params, **kwargs)
 
@@ -133,7 +144,6 @@ def options(url, **kwargs):
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
-
     kwargs.setdefault('allow_redirects', True)
     return request('options', url, **kwargs)
 
@@ -147,7 +157,6 @@ def head(url, **kwargs):
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
-
     kwargs.setdefault('allow_redirects', False)
     return request('head', url, **kwargs)
 
@@ -162,7 +171,6 @@ def post(url, data=None, json=None, **kwargs):
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
-
     return request('post', url, data=data, json=json, **kwargs)
 
 
@@ -176,7 +184,6 @@ def put(url, data=None, **kwargs):
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
-
     return request('put', url, data=data, **kwargs)
 
 
@@ -190,7 +197,6 @@ def patch(url, data=None, **kwargs):
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
-
     return request('patch', url, data=data, **kwargs)
 
 
@@ -201,5 +207,4 @@ def delete(url, **kwargs):
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
-
     return request('delete', url, **kwargs)
