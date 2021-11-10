@@ -108,6 +108,7 @@ __all__ = [
     "RequestsWarning",
     "FileModeWarning",
     "RequestsDependencyWarning",
+    "utils",
 ]
 
 # To get a mostly feature complete requests library, we'll eventually need this in __all__ and implemented correctly
