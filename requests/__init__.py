@@ -11,14 +11,78 @@ It also means cookies are handled mostly by the browser and a bit less by reques
 This way, Python code can use authenticated sessions that already exist in the browser.
 """
 import json as json_module  # Renamed to avoid unintentional shadowing by the json parameter in the request() method
-from email.parser import Parser
 from collections import Mapping
+from email.parser import Parser
 from urllib.parse import urlencode
-from .status_codes import *
-from .exceptions import *
-from .structures import CaseInsensitiveDict
 
 from js import Blob, XMLHttpRequest
+
+from .exceptions import *
+from .hooks import default_hooks
+from .status_codes import *
+from .structures import CaseInsensitiveDict
+
+DEFAULT_REDIRECT_LIMIT = 30
+
+
+class Session:
+    """
+    No-op context manager for packages that rely on requests.Session.
+
+    It has been made entirely no-op because the browser will handle cookies, headers etc., unless explicitly set by
+    the user of this requests version.
+
+    """
+    __attrs__ = [
+        'headers', 'cookies', 'auth', 'proxies', 'hooks', 'params', 'verify',
+        'cert', 'prefetch', 'adapters', 'stream', 'trust_env',
+        'max_redirects',
+    ]
+
+    def __init__(self):
+
+        self.headers = CaseInsensitiveDict({})
+        self.auth = None
+        self.proxies = {}
+        self.hooks = default_hooks()
+        self.params = {}
+        self.stream = False
+        self.verify = True
+        self.cert = None
+        self.max_redirects = DEFAULT_REDIRECT_LIMIT
+        self.trust_env = True
+        self.cookies = {}
+        self.adapters = {}
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        ...
+
+    def get(self, *a, **k):
+        return get(*a, **k)
+
+    def post(self, *a, **k):
+        return post(*a, **k)
+
+    def head(self, *a, **k):
+        return head(*a, **k)
+
+    def options(self, *a, **k):
+        return options(*a, **k)
+
+    def put(self, *a, **k):
+        return put(*a, **k)
+
+    def delete(self, *a, **k):
+        return delete(*a, **k)
+
+    def patch(self, *a, **k):
+        return patch(*a, **k)
+
+    def request(self, *a, **k):
+        return request(*a, **k)
 
 
 class Response:
@@ -74,6 +138,7 @@ def _set_headers(request, headers):
 
 __all__ = [
     'adapters',
+    'hooks',
     'codes',
     'get',
     'post',
