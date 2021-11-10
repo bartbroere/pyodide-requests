@@ -91,6 +91,7 @@ class Response:
             self.raw = bytes(request.response.arrayBuffer().result().to_py())
         else:
             self.text = str(request.response)
+            self.raw = str(request.response)
         self.status_code = request.status
         try:
             self.headers = CaseInsensitiveDict(Parser.parsestr(request.getAllResponseHeaders(), headersonly=True))
