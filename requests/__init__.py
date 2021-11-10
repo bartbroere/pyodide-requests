@@ -89,7 +89,8 @@ class Response:
     def __init__(self, request):
         if request.responseType == 'blob':
             self.raw = bytes(request.response.arrayBuffer().result().to_py())
-        self.text = str(request.response)
+        else:
+            self.text = str(request.response)
         self.status_code = request.status
         try:
             self.headers = CaseInsensitiveDict(Parser.parsestr(request.getAllResponseHeaders(), headersonly=True))
@@ -100,7 +101,7 @@ class Response:
             print(e)
 
     def json(self):
-        return json_module.loads(self.raw)
+        return json_module.loads(self.text)
 
     def iter_content(self, *a, **k):
         yield self.raw
