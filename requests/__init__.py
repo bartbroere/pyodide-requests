@@ -91,7 +91,13 @@ class Response:
             self.raw = bytes(request.response.arrayBuffer().result().to_py())
         self.text = str(request.response)
         self.status_code = request.status
-        self.headers = CaseInsensitiveDict(Parser.parsestr(request.getAllResponseHeaders(), headersonly=True))
+        try:
+            self.headers = CaseInsensitiveDict(Parser.parsestr(request.getAllResponseHeaders(), headersonly=True))
+        except TypeError as e:
+            # TODO Sometimes this raises TypeError: parsestr() missing 1 required positional argument: 'text'
+            #      Find out why and fix, but continue without headers for now
+            self.headers = CaseInsensitiveDict({})
+            print(e)
 
     def json(self):
         return json_module.loads(self.raw)
