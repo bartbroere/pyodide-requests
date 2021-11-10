@@ -73,6 +73,7 @@ def _set_headers(request, headers):
 
 
 __all__ = [
+    'adapters',
     'codes',
     'get',
     'post',
