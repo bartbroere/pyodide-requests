@@ -131,6 +131,15 @@ def request(method, url,
             request.send(data)
         else:
             ...
+    if json:
+        if isinstance(json, Mapping):
+            data = Blob.new([json_module.dumps(json)], {
+                'type': 'application/json',
+            })
+            request.setRequestHeader('Content-Type', 'application/json')
+            request.send(data)
+        else:
+            ...
     else:
         request.send()
     return Response(request)
