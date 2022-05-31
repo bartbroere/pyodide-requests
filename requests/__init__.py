@@ -11,7 +11,7 @@ It also means cookies are handled mostly by the browser and a bit less by reques
 This way, Python code can use authenticated sessions that already exist in the browser.
 """
 import json as json_module  # Renamed to avoid unintentional shadowing by the json parameter in the request() method
-from collections import Mapping
+from collections.abc import Mapping
 from email.parser import Parser
 from urllib.parse import urlencode
 
