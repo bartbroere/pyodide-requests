@@ -113,10 +113,10 @@ def request(method, url,
             auth=None, timeout=None, allow_redirects=True, proxies=None,
             hooks=None, stream=None, verify=None, cert=None, json=None):
     request = XMLHttpRequest.new()
-    request.open(method.upper(), url, False)
     if params:
         if isinstance(params, Mapping):
             url = url + '?' + urlencode(params)
+    request.open(method.upper(), url, False)
     if headers:
         _set_headers(request, headers)
     if cookies:
